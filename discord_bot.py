@@ -19,9 +19,7 @@ class MyClient(discord.Client):
         # retrieve the secret API token from the system environment
         huggingface_token = os.environ['HUGGINGFACE_TOKEN']
         # format the header in our request to Hugging Face
-        self.request_headers = {
-            'Authorization': 'Bearer {}'.format(huggingface_token)
-        }
+        self.request_headers = {'Authorization': f'Bearer {huggingface_token}'}
 
     def query(self, payload):
         """
@@ -32,8 +30,7 @@ class MyClient(discord.Client):
                                     self.api_endpoint,
                                     headers=self.request_headers,
                                     data=data)
-        ret = json.loads(response.content.decode('utf-8'))
-        return ret
+        return json.loads(response.content.decode('utf-8'))
 
     async def on_ready(self):
         # print out information when the bot wakes up
@@ -61,12 +58,12 @@ class MyClient(discord.Client):
         async with message.channel.typing():
           response = self.query(payload)
         bot_response = response.get('generated_text', None)
-        
+
         # we may get ill-formed response if the model hasn't fully loaded
         # or has timed out
         if not bot_response:
             if 'error' in response:
-                bot_response = '`Error: {}`'.format(response['error'])
+                bot_response = f"`Error: {response['error']}`"
             else:
                 bot_response = 'Hmm... something is not right.'
 
